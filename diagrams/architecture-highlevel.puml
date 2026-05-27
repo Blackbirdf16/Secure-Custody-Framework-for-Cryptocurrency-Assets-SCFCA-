@@ -1,0 +1,52 @@
+@startuml
+!define RECTANGLE class
+
+' High-level System/Component Architecture Diagram for SCFCA Project
+
+RECTANGLE Backend {
+  RECTANGLE "API Layer" as API
+  RECTANGLE "Auth Service" as Auth
+  RECTANGLE "Asset Registry" as AssetRegistry
+  RECTANGLE "Case Management" as Cases
+  RECTANGLE "Document Service" as Documents
+  RECTANGLE "Audit Logging" as Audit
+  RECTANGLE "User Management" as Users
+  RECTANGLE "Ticket Workflow" as Tickets
+  RECTANGLE "Core Services" as Core
+}
+
+RECTANGLE Frontend {
+  RECTANGLE "React App" as ReactApp
+  RECTANGLE "Auth UI" as AuthUI
+  RECTANGLE "Case UI" as CaseUI
+  RECTANGLE "Asset UI" as AssetUI
+  RECTANGLE "Document UI" as DocumentUI
+  RECTANGLE "Ticket UI" as TicketUI
+}
+
+RECTANGLE Database
+RECTANGLE "External Integrations" as Integrations
+RECTANGLE "File Storage" as FileStorage
+
+' Connections
+ReactApp --> API : REST/HTTPS
+AuthUI --> API : Auth
+CaseUI --> API : Case Mgmt
+AssetUI --> API : Asset Mgmt
+DocumentUI --> API : Docs
+TicketUI --> API : Tickets
+
+API --> Auth : AuthN/AuthZ
+API --> AssetRegistry
+API --> Cases
+API --> Documents
+API --> Audit
+API --> Users
+API --> Tickets
+API --> Core
+
+API --> Database : ORM/SQL
+API --> FileStorage : File Uploads
+API --> Integrations : External APIs
+
+@enduml

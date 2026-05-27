@@ -1,0 +1,106 @@
+@startuml
+' SCFCA Backend Domain Class Diagram
+
+class Asset {
+  +id: String
+  +case_id: String
+  +symbol: String
+  +asset_type: String
+  +quantity: Decimal
+  +protocol: String
+  +network: String
+  +status: String
+  +notes: String
+  +registered_at: DateTime
+  +registered_by: UUID
+}
+
+class FrozenValuation {
+  +id: UUID
+  +asset_id: String
+  +reference_currency: String
+  +value: Decimal
+  +source: String
+}
+
+class Case {
+  +id: String
+  +title: String
+  +wallet_ref: String
+  +handler_id: UUID
+  +custody_status: Enum
+  +created_at: DateTime
+  +created_by: UUID
+}
+
+class CaseAssignmentHistory {
+  +id: UUID
+  +case_id: String
+  +from_user_id: UUID
+  +to_user_id: UUID
+  +ticket_id: String
+  +assigned_by: UUID
+  +assigned_at: DateTime
+}
+
+class User {
+  +id: UUID
+  +username: String
+  +password_hash: String
+  +role: Enum
+  +is_active: Boolean
+  +created_by: UUID
+}
+
+class Ticket {
+  +id: String
+  +case_id: String
+  +ticket_type: Enum
+  +description: Text
+  +status: Enum
+  +resolution: Enum
+}
+
+class DocumentRecord {
+  +id: String
+  +filename: String
+  +content_type: String
+  +sha256_hex: String
+  +size_bytes: Integer
+  +case_id: String
+  +ticket_id: String
+  +uploaded_by: UUID
+  +created_at: DateTime
+}
+
+class AuditEventRecord {
+  +id: String
+  +timestamp: DateTime
+  +actor_id: String
+  +event_type: String
+  +action: String
+  +entity_type: String
+  +entity_id: String
+  +details: JSON
+  +prev_hash: String
+  +hash: String
+}
+
+' Relationships
+Asset --> Case : case_id
+Asset --> FrozenValuation : valuations
+Asset --> User : registered_by
+FrozenValuation --> Asset : asset_id
+Case --> User : handler_id
+Case --> CaseAssignmentHistory : assignments
+CaseAssignmentHistory --> Case : case_id
+CaseAssignmentHistory --> User : from_user_id
+CaseAssignmentHistory --> User : to_user_id
+CaseAssignmentHistory --> Ticket : ticket_id
+CaseAssignmentHistory --> User : assigned_by
+Ticket --> Case : case_id
+DocumentRecord --> Case : case_id
+DocumentRecord --> Ticket : ticket_id
+DocumentRecord --> User : uploaded_by
+AuditEventRecord --> User : actor_id
+@enduml
